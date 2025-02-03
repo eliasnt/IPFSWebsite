@@ -1,0 +1,30 @@
+name: Deploy to IPFS
+
+on:
+  push:
+    branches:
+      - main  
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+      
+      - name: Install IPFS
+        run: |
+          sudo apt-get update
+          sudo apt-get install ipfs
+          ipfs init --profile server
+
+      - name: Add to IPFS
+        run: |
+          ipfs add -r .
+
+      - name: Pin to IPFS Service
+        env:
+          IPFS_API_KEY: ${{ secrets.IPFS_API_KEY }}
+        run: |
+          ipfs pin add bafybeietrjyavklospdb7jf5yu5h6y37jybcpbsq3cfk5q5y4upuopbq2u
